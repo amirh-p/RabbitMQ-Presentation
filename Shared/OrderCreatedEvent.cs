@@ -1,4 +1,4 @@
-﻿namespace Producer;
+﻿namespace Shared;
 
 public record OrderCreatedEvent(Guid Id, string Description)
 {
