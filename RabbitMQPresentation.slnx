@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="Consumer/Consumer.csproj" Id="d6f9effc-f45f-42ad-8c4c-6c9608a86709" />
+  <Project Path="DeadLetter/DeadLetter.csproj" Id="6de0d1f1-1422-4a8c-96cf-f545650984af" />
   <Project Path="Producer/Producer.csproj" Id="00cc4671-3521-443b-8f2f-bac11c165a94" />
   <Project Path="Shared/Shared.csproj" Id="3371cda6-a612-422a-b121-3d435c8f99e5" />
 </Solution>

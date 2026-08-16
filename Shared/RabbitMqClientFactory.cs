@@ -32,7 +32,7 @@ public static class RabbitMqClientFactory
         await channel.ExchangeDeclareAsync("orders", ExchangeType.Topic, durable: true);
 
         // 2. Dead Letter Exchange (DLX) setup
-        await channel.ExchangeDeclareAsync("orders.dlx", ExchangeType.Fanout, durable: true);
+        await channel.ExchangeDeclareAsync("orders.dlx", ExchangeType.Direct, durable: true);
         await channel.QueueDeclareAsync("orders-dead-letter-queue", durable: true, exclusive: false, autoDelete: false);
         await channel.QueueBindAsync("orders-dead-letter-queue", "orders.dlx", routingKey: "");
 
