@@ -48,12 +48,15 @@ public static class RabbitMqClientFactory
         await channel.ExchangeDeclareAsync("orders", ExchangeType.Topic, durable: true);
 
         // 4. DEAD LETTER EXCHANGE (DLX) TOPOLOGY:
-        // Declares a dedicated Direct exchange and queue for capturing dead-lettered messages (Nack, Expired, MaxLength).
-        await channel.ExchangeDeclareAsync("orders.dlx", ExchangeType.Direct, durable: true);
+        // Declares a dedicated Topic exchange and queue for capturing dead-lettered messages (Nack, Expired, MaxLength).
+        // Use a topic exchange and '#' binding so all dead-lettered messages (regardless of original routing key)
+        // will be delivered to the DLQ.
+        await channel.ExchangeDeclareAsync("orders.dlx", ExchangeType.Topic, durable: true);
         await channel.QueueDeclareAsync("orders-dead-letter-queue", durable: true, exclusive: false, autoDelete: false);
 
-        // Binds DLQ to DLX with an empty routing key so all dead-lettered messages arrive here regardless of origin key.
-        await channel.QueueBindAsync("orders-dead-letter-queue", "orders.dlx", routingKey: "");
+        // Binds DLQ to DLX with a wildcard routing key so all dead-lettered messages arrive here regardless of origin key.
+        await channel.QueueBindAsync("orders-dead-letter-queue", "orders.dlx", routingKey: "#");
+
 
         // 5. MAIN QUEUE WITH ADVANCED ARGUMENTS (DLX & TTL):
         var mainQueueArgs = new Dictionary<string, object?>
