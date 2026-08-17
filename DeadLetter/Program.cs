@@ -30,8 +30,8 @@ consumer.ReceivedAsync += async (sender, @event) =>
 
     if (headers != null && headers.TryGetValue("x-death", out var deathHeader) && deathHeader is IList<object> deathList && deathList.Count > 0)
     {
-        // deathList[0] represents the MOST RECENT dead-letter event in chronological history.
-        if (deathList[0] is IDictionary<string, object> deathInfo)
+        // deathList.First() represents the MOST RECENT dead-letter event in chronological history.
+        if (deathList.First() is IDictionary<string, object> deathInfo)
         {
             originalReason = Encoding.UTF8.GetString((byte[])deathInfo["reason"]);     // e.g., "rejected", "expired", or "maxlen"
             originalExchange = Encoding.UTF8.GetString((byte[])deathInfo["exchange"]); // Original target exchange

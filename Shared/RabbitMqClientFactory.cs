@@ -63,7 +63,6 @@ public static class RabbitMqClientFactory
             
             // Queue-level Message Time-To-Live (TTL):
             // Unprocessed messages expire after 60,000 ms (60 seconds) and get sent to DLX.
-            // (Note: Comment says 30 seconds, but 60000 ms = 60s).
             { "x-message-ttl", 60000  }
         };
 

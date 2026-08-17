@@ -37,6 +37,14 @@ consumer.ReceivedAsync += async (sender, @event) =>
     {
         Console.WriteLine($"[Consumer] Corrupt payload on Tag #{@event.DeliveryTag}. Nacking to DLX...");
 
+        // 1. Flush and acknowledge any prior valid messages held in the batch buffer
+        if (unackedCount > 0)
+        {
+            Console.WriteLine($"[Consumer] Flushing {unackedCount} buffered message(s) prior to Tag #{@event.DeliveryTag}...");
+            await client.Channel.BasicAckAsync(deliveryTag: @event.DeliveryTag - 1, multiple: true);
+            unackedCount = 0;
+        }
+
         // - requeue: false = Triggers Dead Letter Exchange (DLX) routing if configured on the queue.
         //   If no DLX exists, the message is permanently dropped/purged from the broker.
         // - BUG ALERT: Returning here leaves any previously unacked valid messages (held in the batch buffer)
