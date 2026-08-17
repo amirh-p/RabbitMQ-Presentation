@@ -2,6 +2,7 @@
 using RabbitMQ.Client.Events;
 using Shared;
 using System.Text;
+using System.Text.Json;
 
 await using var client = await RabbitMqClientFactory.CreateChannelAsync("DLQ-Consumer");
 
@@ -39,6 +40,10 @@ consumer.ReceivedAsync += async (sender, @event) =>
     Console.WriteLine($"  ├─ Original Routing Key: {originalRoutingKey}");
     Console.WriteLine($"  └─ Payload: {message}");
 
+    //Example: Fixing message
+    message = OrderCreatedEvent.FixedOrder.Description;
+    var newBody = JsonSerializer.SerializeToUtf8Bytes(OrderCreatedEvent.FixedOrder);
+
     // 2. Decision Logic: Fix/Sanitize and Reprocess OR Poison-Queue/Discard
     if (message.Contains("CORRUPT"))
     {
@@ -55,7 +60,7 @@ consumer.ReceivedAsync += async (sender, @event) =>
             exchange: originalExchange,
             routingKey: originalRoutingKey,
             mandatory: false,
-            body: @event.Body
+            body: newBody
         );
 
         // Ack from DLQ once successfully re-published
@@ -70,15 +75,6 @@ Console.WriteLine("DLQ Consumer running. Press [Enter] to exit...");
 Console.ReadKey();
 
 //[
-//  {
-//    "reason": "rejected",              // "rejected", "expired", or "maxlen"
-//    "queue": "order-created-queue",    // Queue the message died in
-//    "time": 1723838583,                // Timestamp (Erlang/Unix epoch)
-//    "exchange": "orders-exchange",     // Original exchange before dead-lettering
-//    "routing-keys": ["order.created"], // Original routing key(s)
-//    "count": 1                         // How many times it died for THIS reason in THIS queue
-//  }
-//][
 //  {
 //    "reason": "rejected",              // "rejected", "expired", or "maxlen"
 //    "queue": "order-created-queue",    // Queue the message died in

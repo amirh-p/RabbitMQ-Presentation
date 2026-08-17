@@ -9,4 +9,6 @@ public record OrderCreatedEvent(Guid Id, string Description)
     public static readonly OrderCreatedEvent IgnoredOrder = new(Guid.CreateVersion7(), "Ignored US Order");
 
     public static readonly OrderCreatedEvent CorruptOrder = new(Guid.Empty, "CORRUPT_PAYLOAD");
+
+    public static readonly OrderCreatedEvent FixedOrder = new(Guid.CreateVersion7(), "FIXED_PAYLOAD");
 }
