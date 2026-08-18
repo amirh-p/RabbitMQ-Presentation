@@ -16,7 +16,7 @@ consumer.ReceivedAsync += async (sender, @event) =>
 {
     var message = Encoding.UTF8.GetString(@event.Body.ToArray());
 
-    Console.WriteLine($"\n[Consumer] Processing Tag #{@event.DeliveryTag} | RoutingKey: '{@event.RoutingKey}'");
+    Console.WriteLine($"\n[Consumer] Processing Tag #{@event.DeliveryTag} | RoutingKey: '{@event.RoutingKey}' | Message: '{message}'");
 
     if (message.Contains("CORRUPT"))
     {
