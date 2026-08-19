@@ -41,7 +41,7 @@ public static class RabbitMqClientFactory
         var mainQueueArgs = new Dictionary<string, object?>
         {
             { "x-dead-letter-exchange", "orders.dlx" },
-            { "x-message-ttl", 60000  }
+            { "x-message-ttl", 300000  }
         };
 
         await channel.QueueDeclareAsync(
